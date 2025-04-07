@@ -21,8 +21,9 @@ function getHumanChoice() {
 }
 
 function playRound(humanChoice,cpuChoice) {
+
     let winner = null;
-    if (humanChoice === cpuChoice) {winner = "draw"}
+    if (humanChoice === cpuChoice) {winner = "Draw"}
     else {
         switch (humanChoice) {
             case "rock":
@@ -35,23 +36,35 @@ function playRound(humanChoice,cpuChoice) {
                 cpuChoice === "rock" ? winner = "CPU" : winner = "Player";
                 break;
         }
-        (winner === "Player") ? humanScore++ : cpuScore++
+        (winner === "Player") ? humanScore++ : cpuScore++;
     }
-
-    console.group(`Round ${rounds+1}`)
-    console.log(`You chose ${humanChoice}. CPU chose ${cpuChoice}`)
-    console.log(`The winner is: ${winner}`)
-    console.log(`Current Score: (P)${humanScore} - (C)${cpuScore}`)
-    console.groupEnd(`Round ${rounds+1}`)
     rounds++;
+    humanChoice = humanChoice.substring(0,1).toUpperCase() + humanChoice.substring(1);
+    cpuChoice = cpuChoice.substring(0,1).toUpperCase() + cpuChoice.substring(1);
+
+    const results = document.querySelector('.results');
+    results.textContent = `Round ${rounds}`
+
+    const resultsWinner = document.createElement('h1');
+    resultsWinner.textContent = `${humanChoice} ${(winner === "Draw") ? "draws with" : (winner === "Player") ? "beats" : "loses to"} ${cpuChoice} (${winner})`
+    results.appendChild(resultsWinner)
+
+    const score = document.createElement('h1');
+    score.textContent = `Score: [P]${humanScore} - [C]${cpuScore}`;
+    results.appendChild(score);
+    
+    if (humanScore === 5 || cpuScore === 5) {
+        alert(`${winner} wins!`);
+        // Remove buttons and add 'New Game' button
+    }
 }
 
 function playGame() {
-    while (rounds < 5) {
-        let human = getHumanChoice();
-        let cpu = getComputerChoice();
-        playRound(human,cpu);
-    }
+    const buttons = document.querySelectorAll('button')
+    buttons.forEach((e) => {
+       e.addEventListener('click',() => playRound(e.id,getComputerChoice())
+    )})
+
     let winner = humanScore > cpuScore ? "Player" : humanScore < cpuScore ? "CPU" : "Draw";
     console.log(`Final Score: (P)${humanScore} - (C)${cpuScore}`)
     console.log(`The winner is ${winner}!`)
